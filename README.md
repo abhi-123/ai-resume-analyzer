@@ -112,15 +112,15 @@ Open the app printed by Vite (usually **`http://localhost:5173`**).
 
 ✅ The frontend is currently configured to call:
 
-- **`POST /api/analyze`**
-- **`POST /api/rewrite`**
+- **`POST /analyze`**
+- **`POST /rewrite`**
 
 When running locally, that maps to:
 
-- **`http://localhost:8000/api/analyze`**
-- **`http://localhost:8000/api/rewrite`**
+- **`http://localhost:8000/analyze`**
+- **`http://localhost:8000/rewrite`**
 
-### 🔍 `POST /api/analyze`
+### 🔍 `POST /analyze`
 
 Accepts `multipart/form-data` with **either**:
 
@@ -142,7 +142,7 @@ Returns:
 }
 ```
 
-### ✨ `POST /api/rewrite`
+### ✨ `POST /rewrite`
 
 Accepts `multipart/form-data` with:
 
@@ -169,7 +169,7 @@ Returns:
 ## 🧯 Troubleshooting
 
 - **❌ CORS / API not reachable**: ensure backend is running on **port `8000`**.
-- **❌ 404 on `/api/*`**: the UI calls `/api/analyze` + `/api/rewrite`. If your backend exposes different paths, update backend routes or the `fetch()` URLs in `src/App.jsx`.
+- **❌ 404 on `/*`**: the UI calls `/analyze` + `/rewrite`. If your backend exposes different paths, update backend routes or the `fetch()` URLs in `src/App.jsx`.
 
 ---
 
