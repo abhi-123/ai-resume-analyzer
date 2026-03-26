@@ -11,7 +11,7 @@
 
 <img src="screenshot.png" width="800"/>
 
----
+## 🌐 **Live Demo:** https://ai-resume-analyzer-indol-one.vercel.app/
 
 ## ✨ Features
 
@@ -43,7 +43,7 @@
 ## ⚙️ How it works
 
 1. **Upload** resume (or provide text input)
-2. *(Optional)* Enable **Advanced Analysis** and add a job description
+2. _(Optional)_ Enable **Advanced Analysis** and add a job description
 3. Extract & clean content
 4. AI analysis → **score + insights** (role-aware if JD is provided)
 5. Optional rewrite → **“Fix My Resume”** (tailored in advanced mode)
