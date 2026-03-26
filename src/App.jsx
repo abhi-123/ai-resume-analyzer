@@ -15,19 +15,26 @@ export default function ResumeAnalyzer() {
     weaknesses: [],
   });
   const [fixedResume, setFixedResume] = useState();
+  const [isAdvanced, setIsAdvanced] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleSubmit = async () => {
     try {
+      if (isAdvanced && !text) {
+        setError(true);
+        return;
+      }
       setLoading(true);
       const body = new FormData();
 
       if (file) {
         body.append("file", file);
-      } else {
+      }
+      if (text) {
         body.append("text", text);
       }
 
-      const res = await fetch("http://localhost:8000/api/analyze", {
+      const res = await fetch("http://localhost:8000/analyze", {
         method: "POST",
         body,
       });
@@ -48,10 +55,14 @@ export default function ResumeAnalyzer() {
     try {
       setFixing(true);
       let body = new FormData();
-      if (file) body.append("file", file);
-      else body.append("text", text);
+      if (file) {
+        body.append("file", file);
+      }
+      if (text) {
+        body.append("text", text);
+      }
       body.append("weaknesses", JSON.stringify(response.weaknesses));
-      const rewriteResponse = await fetch("http://localhost:8000/api/rewrite", {
+      const rewriteResponse = await fetch("http://localhost:8000/rewrite", {
         method: "POST",
         body: body,
       });
@@ -91,7 +102,7 @@ export default function ResumeAnalyzer() {
             onChange={(e) => {
               const selected = e.target.files[0];
               setFile(selected);
-              setText("");
+              //  setText("");
             }}
             className="hidden"
           />
@@ -124,24 +135,55 @@ export default function ResumeAnalyzer() {
           <p className="text-xs text-gray-400 mt-2">Supported: PDF, DOCX</p>
         </div>
 
-        {/* Divider */}
-        <div className="flex items-center my-6">
-          <div className="flex-1 h-px bg-gray-300"></div>
-          <span className="px-3 text-gray-500 text-sm">OR</span>
-          <div className="flex-1 h-px bg-gray-300"></div>
-        </div>
+        <label className="flex items-start gap-3 cursor-pointer group mt-4 mb-4">
+          <input
+            type="checkbox"
+            checked={isAdvanced}
+            onChange={() => {
+              setIsAdvanced(!isAdvanced);
+              setText("");
+            }}
+            className="mt-1 w-5 h-5 accent-purple-600 cursor-pointer"
+          />
+
+          <div>
+            <p className="text-gray-800 font-semibold group-hover:text-purple-600 transition">
+              🚀 Advanced Analysis
+            </p>
+            <p className="text-sm text-gray-500">
+              Match your resume with a specific job description and get tailored
+              insights & ATS score
+            </p>
+          </div>
+        </label>
 
         {/* Controlled Textarea */}
-        <textarea
-          value={text}
-          placeholder="Paste your resume text here..."
-          className="w-full h-40 p-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-          onChange={(e) => {
-            setText(e.target.value);
-            setFile(null);
-            if (inputRef.current) inputRef.current.value = "";
-          }}
-        />
+        {isAdvanced && (
+          <>
+            <textarea
+              value={text}
+              placeholder="Paste your job description here..."
+              className={`w-full h-40 p-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400 resize-none
+               ${
+                 error
+                   ? "border-red-500 focus:ring-2 focus:ring-red-300"
+                   : "border-gray-300 focus:ring-2 focus:ring-purple-400"
+               }
+              `}
+              onChange={(e) => {
+                setText(e.target.value);
+                setError(false);
+                // setFile(null);
+                //  if (inputRef.current) inputRef.current.value = "";
+              }}
+            />
+            {error && (
+              <p className="text-red-500 text-sm mt-2">
+                ⚠️ Please add a job description to continue
+              </p>
+            )}
+          </>
+        )}
 
         {/* Button */}
         <button

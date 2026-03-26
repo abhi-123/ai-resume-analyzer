@@ -1,6 +1,6 @@
 # 📄 AI Resume Analyzer & Optimizer
 
-**AI-powered web app** that analyzes your resume and generates **actionable suggestions** (plus an optional **ATS-friendly rewrite**) to improve **clarity**, **impact**, and **structure**.
+**AI-powered web app** that analyzes your resume and generates **actionable suggestions** (plus an optional **ATS-friendly rewrite**) to improve **clarity**, **impact**, and **structure**. It also supports an **Advanced Job Description Matcher** mode for role-specific insights.
 
 <p>
   <a href="#-getting-started"><img alt="Start" src="https://img.shields.io/badge/Start-Local%20Setup-blue"></a>
@@ -18,8 +18,12 @@
 - **🔍 Resume analysis**
   - Upload a resume (`.pdf`, `.docx`) **or** paste text
   - Returns **score (0–100)**, summary, strengths, weaknesses, suggestions
+- **🎯 Job Description matcher (Advanced mode)**
+  - Paste a target job description and match your resume against the role
+  - Get more tailored feedback and ATS-style alignment insights
 - **🛠️ “Fix My Resume” rewrite**
   - Rewrites your resume based on detected **weaknesses**
+  - In advanced mode, optimizes suggestions/rewrite with job-role context
   - Outputs structured sections: **summary / experience / projects / skills**
 - **🎯 Modern UI/UX**
   - Responsive layout (Tailwind)
@@ -38,11 +42,12 @@
 
 ## ⚙️ How it works
 
-1. **Upload** resume / **paste** text
-2. Extract & clean content
-3. AI analysis → **score + insights**
-4. Optional rewrite → **“Fix My Resume”**
-5. Show results in the UI
+1. **Upload** resume (or provide text input)
+2. *(Optional)* Enable **Advanced Analysis** and add a job description
+3. Extract & clean content
+4. AI analysis → **score + insights** (role-aware if JD is provided)
+5. Optional rewrite → **“Fix My Resume”** (tailored in advanced mode)
+6. Show results in the UI
 
 ---
 
@@ -124,8 +129,8 @@ When running locally, that maps to:
 
 Accepts `multipart/form-data` with **either**:
 
-- **`file`**: PDF/DOCX file (optional)
-- **`text`**: raw resume text (optional)
+- **`file`**: PDF/DOCX resume file (used by the current UI flow)
+- **`text`**: optional job description in **Advanced Analysis** mode
 
 Returns:
 
@@ -149,6 +154,8 @@ Accepts `multipart/form-data` with:
 - **`file`** **or** **`text`**
 - **`weaknesses`**: JSON-encoded array of weaknesses (string)
 
+In advanced mode, rewrite quality can be influenced by job-description context from the UI flow.
+
 Returns:
 
 ```json
@@ -170,6 +177,7 @@ Returns:
 
 - **❌ CORS / API not reachable**: ensure backend is running on **port `8000`**.
 - **❌ 404 on `/*`**: the UI calls `/analyze` + `/rewrite`. If your backend exposes different paths, update backend routes or the `fetch()` URLs in `src/App.jsx`.
+- **❌ Advanced Analysis not giving tailored results**: enable the checkbox and provide a non-empty job description before analyzing.
 
 ---
 
