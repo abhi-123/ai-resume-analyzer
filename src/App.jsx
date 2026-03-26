@@ -34,10 +34,13 @@ export default function ResumeAnalyzer() {
         body.append("text", text);
       }
 
-      const res = await fetch("http://localhost:8000/analyze", {
-        method: "POST",
-        body,
-      });
+      const res = await fetch(
+        "https://ai-resume-analyzer-j4u0.onrender.com/analyze",
+        {
+          method: "POST",
+          body,
+        },
+      );
 
       const data = await res.json();
 
@@ -62,10 +65,13 @@ export default function ResumeAnalyzer() {
         body.append("text", text);
       }
       body.append("weaknesses", JSON.stringify(response.weaknesses));
-      const rewriteResponse = await fetch("http://localhost:8000/rewrite", {
-        method: "POST",
-        body: body,
-      });
+      const rewriteResponse = await fetch(
+        "https://ai-resume-analyzer-j4u0.onrender.com/rewrite",
+        {
+          method: "POST",
+          body: body,
+        },
+      );
       const data = await rewriteResponse.json();
       console.log(data);
       if (data.success);
