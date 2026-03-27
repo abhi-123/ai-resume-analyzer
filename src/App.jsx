@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import Loader from "./Loader";
+import ExpandableList from "./ExpandableList";
 
 export default function ResumeAnalyzer() {
   const [file, setFile] = useState(null);
@@ -17,6 +18,7 @@ export default function ResumeAnalyzer() {
   const [fixedResume, setFixedResume] = useState();
   const [isAdvanced, setIsAdvanced] = useState(false);
   const [error, setError] = useState(false);
+  const [isDeep, setIsDeep] = useState(false);
 
   const handleSubmit = async () => {
     try {
@@ -33,9 +35,10 @@ export default function ResumeAnalyzer() {
       if (text) {
         body.append("text", text);
       }
+      body.append("mode", isDeep ? "gpt-5" : "gpt-4o-mini");
 
       const res = await fetch(
-        "https://ai-resume-analyzer-j4u0.onrender.com/analyze",
+        "https://ai-resume-analyzer-j4u0.onrender.com/analyze", //http://127.0.0.1:8000/analyze //https://ai-resume-analyzer-j4u0.onrender.com/analyze
         {
           method: "POST",
           body,
@@ -65,6 +68,7 @@ export default function ResumeAnalyzer() {
         body.append("text", text);
       }
       body.append("weaknesses", JSON.stringify(response.weaknesses));
+      body.append("mode", isDeep ? "gpt-5" : "gpt-4o-mini");
       const rewriteResponse = await fetch(
         "https://ai-resume-analyzer-j4u0.onrender.com/rewrite",
         {
@@ -144,6 +148,25 @@ export default function ResumeAnalyzer() {
         <label className="flex items-start gap-3 cursor-pointer group mt-4 mb-4">
           <input
             type="checkbox"
+            id="deepAnalysis"
+            className="mt-1 h-5 w-5 accent-purple-600 cursor-pointer"
+            checked={isDeep}
+            onChange={(e) => setIsDeep(e.target.checked)}
+          />
+          <div>
+            <p className="text-gray-800 font-semibold group-hover:text-purple-600 transition">
+              🧠 Deep Analysis (Recommended for serious review)
+            </p>
+            <p className="text-sm text-gray-500">
+              Get more accurate and detailed insights. ⏳ Slower response • 💰
+              Higher cost
+            </p>
+          </div>
+        </label>
+
+        <label className="flex items-start gap-3 cursor-pointer group mt-4 mb-4">
+          <input
+            type="checkbox"
             checked={isAdvanced}
             onChange={() => {
               setIsAdvanced(!isAdvanced);
@@ -205,7 +228,7 @@ export default function ResumeAnalyzer() {
       {!loading && !fixing && !fixedResume && (
         <div>
           {/* Score */}
-          {response.score !== null && (
+          {response?.score !== null && (
             <div className="w-full max-w-5xl mt-10 text-center">
               <h3 className="font-semibold text-lg">📊 Resume Score</h3>
               <p className="text-4xl font-bold text-blue-600 mt-2">
@@ -215,56 +238,34 @@ export default function ResumeAnalyzer() {
           )}
 
           {/* Grid Results */}
-          <div className="w-full max-w-5xl mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="w-full max-w-5xl mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             {/* Summary */}
-            {response.summary?.length > 0 && (
-              <div className="bg-white p-5 rounded-xl shadow">
-                <h3 className="font-semibold text-lg">🧾 Summary</h3>
-                <ul className="mt-2 text-gray-600 space-y-1">
-                  {response.summary.map((item, i) => (
-                    <li key={i}>• {item}</li>
-                  ))}
-                </ul>
-              </div>
+            {response?.summary?.length > 0 && (
+              <ExpandableList title="📄 Summary" items={response.summary} />
             )}
 
             {/* Suggestions */}
-            {response.suggestions?.length > 0 && (
-              <div className="bg-white p-5 rounded-xl shadow">
-                <h3 className="font-semibold text-lg">⚡ Suggestions</h3>
-                <ul className="mt-2 text-gray-600 space-y-1">
-                  {response.suggestions.map((item, i) => (
-                    <li key={i}>• {item}</li>
-                  ))}
-                </ul>
-              </div>
+            {response?.suggestions?.length > 0 && (
+              <ExpandableList
+                title="⚡ Suggestions"
+                items={response.suggestions}
+              />
             )}
 
             {/* Strengths */}
-            {response.strengths?.length > 0 && (
-              <div className="bg-white p-5 rounded-xl shadow">
-                <h3 className="font-semibold text-lg">💪 Strengths</h3>
-                <ul className="mt-2 text-gray-600 space-y-1">
-                  {response.strengths.map((item, i) => (
-                    <li key={i}>• {item}</li>
-                  ))}
-                </ul>
-              </div>
+            {response?.strengths?.length > 0 && (
+              <ExpandableList title="💪 Strengths" items={response.strengths} />
             )}
 
             {/* Weaknesses */}
-            {response.weaknesses?.length > 0 && (
-              <div className="bg-white p-5 rounded-xl shadow">
-                <h3 className="font-semibold text-lg">📉 Weaknesses</h3>
-                <ul className="mt-2 text-gray-600 space-y-1">
-                  {response.weaknesses.map((item, i) => (
-                    <li key={i}>• {item}</li>
-                  ))}
-                </ul>
-              </div>
+            {response?.weaknesses?.length > 0 && (
+              <ExpandableList
+                title="📉 Weaknesses"
+                items={response.weaknesses}
+              />
             )}
           </div>
-          {response.score !== null && response.score !== 0 && (
+          {response?.score !== null && response?.score !== 0 && (
             <div className="w-full max-w-5xl flex justify-center">
               <button
                 className="mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl hover:opacity-90 transition font-semibold disabled:opacity-50 px-8"

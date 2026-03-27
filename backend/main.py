@@ -26,7 +26,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 router = APIRouter()
 
 @app.post("/analyze")
-async def analyze(file: UploadFile = File(None), text: str = Form(None)):
+async def analyze(file: UploadFile = File(None), text: str = Form(None),mode:str = Form(None)):
     textToBeSend = ''
     if file:
         filename = file.filename
@@ -42,10 +42,10 @@ async def analyze(file: UploadFile = File(None), text: str = Form(None)):
             textToBeSend = "\n".join([para.text for para in doc.paragraphs])
     else:
      return {"error": "No input provided"}
-    data = summarize_resume(textToBeSend,text)
+    data = summarize_resume(textToBeSend,mode,text)
     return data
        
-def summarize_resume(text,job_description=''):
+def summarize_resume(text,mode,job_description=''):
     try:
      # 🔥 safety limit (LLM token control)
         #text = text[:6000]
@@ -65,7 +65,7 @@ If a job description is provided, you MUST strictly evaluate the resume in the c
 
 
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=mode,
             messages=[
                 {
                     "role": "system",
@@ -138,7 +138,7 @@ If a job description is provided, you MUST strictly evaluate the resume in the c
         }
 
 @app.post("/rewrite")
-async def rewrite(file: UploadFile = File(None), text: str = Form(None) , weaknesses: str = Form(None)):
+async def rewrite(file: UploadFile = File(None), text: str = Form(None) , weaknesses: str = Form(None),mode: str=Form(None)):
     weaknesses_list = []
     if weaknesses:
      weaknesses_list = json.loads(weaknesses)
@@ -160,10 +160,10 @@ async def rewrite(file: UploadFile = File(None), text: str = Form(None) , weakne
        textToBeSend = text
     else:
      return {"error": "No input provided"}
-    data = rewrite_resume(textToBeSend,weakness_text,text)
+    data = rewrite_resume(textToBeSend,weakness_text,mode,text)
     return data
 
-def rewrite_resume(text,weakness_text,job_description=''):
+def rewrite_resume(text,weakness_text,mode,job_description=''):
     print(weakness_text)
     try:
      # 🔥 safety limit (LLM token control)
@@ -184,7 +184,7 @@ def rewrite_resume(text,weakness_text,job_description=''):
 
 
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=mode,
             messages=[
                 {
                     "role": "system",
