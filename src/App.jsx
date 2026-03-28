@@ -19,6 +19,7 @@ export default function ResumeAnalyzer() {
   const [isAdvanced, setIsAdvanced] = useState(false);
   const [error, setError] = useState(false);
   const [isDeep, setIsDeep] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleSubmit = async () => {
     try {
@@ -102,7 +103,25 @@ export default function ResumeAnalyzer() {
       {/* Main Card */}
       <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-6">
         {/* Upload Section */}
-        <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-500 transition">
+        <div
+          className={`border-2 border-dashed rounded-xl p-8 text-center transition
+    ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-500"}
+  `}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragging(false);
+
+            const droppedFile = e.dataTransfer.files[0];
+            if (droppedFile) {
+              setFile(droppedFile);
+            }
+          }}
+        >
           <p className="text-gray-500 mb-3">Drag & drop your resume or</p>
 
           <input

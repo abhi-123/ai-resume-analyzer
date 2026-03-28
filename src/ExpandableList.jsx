@@ -26,9 +26,9 @@ const ExpandableList = ({ title, items = [], limit = 3, icon = "•" }) => {
         {visibleItems.map((item, i) => (
           <li
             key={i}
-            className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition"
+            className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition"
           >
-            <span className="text-purple-500 mt-1">{icon}</span>
+            <span className="text-purple-500">{icon}</span>
             <span className="text-gray-700 text-sm">{item}</span>
           </li>
         ))}
@@ -36,7 +36,7 @@ const ExpandableList = ({ title, items = [], limit = 3, icon = "•" }) => {
 
       {/* Fade effect */}
       {!expanded && items.length > limit && (
-        <div className="h-6 bg-gradient-to-t from-white to-transparent mt-2"></div>
+        <div className="bg-gradient-to-t from-white to-transparent"></div>
       )}
     </div>
   );
